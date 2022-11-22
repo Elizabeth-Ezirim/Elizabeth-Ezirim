@@ -1,0 +1,746 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Ornis REST API specs",
+    "description" : "Ornis RESTful API",
+    "contact" : {
+      "name" : "DotMFB Engineering",
+      "email" : "engineering@dotmfb.com"
+    },
+    "version" : "0.1.0"
+  },
+  "tags" : [ {
+    "name" : "transactions",
+    "description" : "Dot's Transactions API"
+  }, {
+    "name" : "bvn",
+    "description" : "Dot's BVN service API"
+  }, {
+    "name" : "accounts",
+    "description" : "Dot's Bank accounts API"
+  }, {
+    "name" : "tiers",
+    "description" : "Tier level APIs"
+  } ],
+  "paths" : {
+    "/api/v1/transactions/{accountId}" : {
+      "get" : {
+        "tags" : [ "transactions" ],
+        "operationId" : "get_1",
+        "parameters" : [ {
+          "name" : "accountId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "transactionId",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "transferId",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TransactionDetailsData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/list/{accountId}" : {
+      "get" : {
+        "tags" : [ "transactions" ],
+        "operationId" : "transactions_1",
+        "parameters" : [ {
+          "name" : "accountId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "pageNumber",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 100
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedResultTransactionData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bvn/enquire/{bvn}" : {
+      "get" : {
+        "tags" : [ "bvn" ],
+        "summary" : "Retrieve information associated with a BVN",
+        "operationId" : "enquire_1",
+        "parameters" : [ {
+          "name" : "bvn",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 12,
+            "minLength" : 11,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BvnAccount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bvn/verify/{bvn}" : {
+      "get" : {
+        "tags" : [ "bvn" ],
+        "summary" : "Validates user supplied BVN against managed data",
+        "operationId" : "validate_1",
+        "parameters" : [ {
+          "name" : "bvn",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 12,
+            "minLength" : 11,
+            "type" : "string"
+          }
+        }, {
+          "name" : "dateOfBirth",
+          "in" : "query",
+          "description" : "User's date of birth formatted dd-MMM-yyyy",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 24,
+            "minLength" : 10,
+            "type" : "string"
+          }
+        }, {
+          "name" : "firstName",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 128,
+            "minLength" : 2,
+            "type" : "string"
+          }
+        }, {
+          "name" : "lastName",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 128,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        }, {
+          "name" : "phoneNo",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 14,
+            "minLength" : 11,
+            "type" : "string"
+          }
+        }, {
+          "name" : "email",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VerificationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{accountNo}" : {
+      "get" : {
+        "tags" : [ "accounts" ],
+        "description" : "Search Bank account by account number",
+        "operationId" : "findByAccountNo_1",
+        "parameters" : [ {
+          "name" : "accountNo",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 10,
+            "minLength" : 10,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AccountData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{accountNo}/transactions" : {
+      "get" : {
+        "tags" : [ "accounts" ],
+        "operationId" : "listTransactions_1",
+        "parameters" : [ {
+          "name" : "accountNo",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 10,
+            "minLength" : 10,
+            "type" : "string"
+          }
+        }, {
+          "name" : "pageNumber",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 100
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedResultTransactionData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tiers/{tierId}" : {
+      "get" : {
+        "tags" : [ "tiers" ],
+        "operationId" : "get_2",
+        "parameters" : [ {
+          "name" : "tierId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TierData"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "tiers" ],
+        "operationId" : "updateFeature_1",
+        "parameters" : [ {
+          "name" : "tierId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TierFeatureData"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TierData"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "tiers" ],
+        "operationId" : "addFeature_1",
+        "parameters" : [ {
+          "name" : "tierId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TierFeatureData"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TierData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tiers" : {
+      "get" : {
+        "tags" : [ "tiers" ],
+        "operationId" : "listTiers_1",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/TierData"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tiers/{tierId}/{featureId}" : {
+      "delete" : {
+        "tags" : [ "tiers" ],
+        "operationId" : "removeFeature_1",
+        "parameters" : [ {
+          "name" : "tierId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "featureId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TierData"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AccountData" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "accountNo" : {
+            "type" : "string"
+          },
+          "bankCode" : {
+            "type" : "string"
+          },
+          "bankName" : {
+            "type" : "string"
+          },
+          "accountType" : {
+            "type" : "string"
+          },
+          "accountProductName" : {
+            "type" : "string"
+          },
+          "ownerClientId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "ownerFullName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TransactionDetailsData" : {
+        "type" : "object",
+        "properties" : {
+          "transferId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "transactionId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "transactionType" : {
+            "type" : "string"
+          },
+          "transactionReference" : {
+            "type" : "string"
+          },
+          "debit" : {
+            "type" : "boolean"
+          },
+          "reversed" : {
+            "type" : "boolean"
+          },
+          "amount" : {
+            "type" : "number"
+          },
+          "transactionDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "sender" : {
+            "$ref" : "#/components/schemas/AccountData"
+          },
+          "receiver" : {
+            "$ref" : "#/components/schemas/AccountData"
+          }
+        }
+      },
+      "PagedResultTransactionData" : {
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "entries" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TransactionData"
+            }
+          }
+        }
+      },
+      "TransactionData" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "accountId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "transferId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "paymentDetailId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "reversed" : {
+            "type" : "boolean"
+          },
+          "debit" : {
+            "type" : "boolean"
+          },
+          "amount" : {
+            "type" : "number"
+          },
+          "runningBalance" : {
+            "type" : "number"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "transactionType" : {
+            "type" : "string"
+          },
+          "transactionDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "BvnAccount" : {
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "middleName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "gender" : {
+            "type" : "string"
+          },
+          "dateOfBirth" : {
+            "type" : "string"
+          },
+          "phoneNo" : {
+            "type" : "string"
+          },
+          "enrollmentBank" : {
+            "type" : "string"
+          },
+          "enrollmentBranch" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "phoneNo2" : {
+            "type" : "string"
+          },
+          "levelOfAccount" : {
+            "type" : "string"
+          },
+          "lgaOfOrigin" : {
+            "type" : "string"
+          },
+          "lgaOfResidence" : {
+            "type" : "string"
+          },
+          "maritalStatus" : {
+            "type" : "string"
+          },
+          "nin" : {
+            "type" : "string"
+          },
+          "nameOnCard" : {
+            "type" : "string"
+          },
+          "nationality" : {
+            "type" : "string"
+          },
+          "residentialAddress" : {
+            "type" : "string"
+          },
+          "stateOfOrigin" : {
+            "type" : "string"
+          },
+          "stateOfResidence" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "bvn" : {
+            "type" : "string"
+          },
+          "pixBase64" : {
+            "type" : "string"
+          }
+        }
+      },
+      "VerificationResult" : {
+        "type" : "object",
+        "properties" : {
+          "dob" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "lastname" : {
+            "type" : "string"
+          },
+          "firstname" : {
+            "type" : "string"
+          },
+          "phoneNo" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "valid" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "TierData" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "position" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "features" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TierFeatureData"
+            }
+          }
+        }
+      },
+      "TierFeatureData" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "active" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "maxLength" : 64,
+            "minLength" : 3,
+            "type" : "string"
+          },
+          "description" : {
+            "maxLength" : 256,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}
